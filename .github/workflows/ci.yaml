@@ -1,0 +1,40 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Verify compatibility across multiple Python versions
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up uv and Python
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "latest"
+        python-version: ${{ matrix.python-version }}
+        enable-cache: true # Instantly speeds up sequential runs by caching the uv package store
+
+    - name: Install Project Dependencies
+      # Syncs the environment strictly against uv.lock definitions including dev packages
+      run: uv sync --locked --all-extras --dev
+
+    - name: Lint and Format Check (Ruff)
+      # Ruff replaces flake8/black and runs in milliseconds via uv
+      run: |
+        uv run ruff check .
+        uv run ruff format --check .
+
+    - name: Run Test Suite
+      # Runs CPU-based unit shape tests safely within uv virtual env
+      run: uv run pytest tests/ -v
