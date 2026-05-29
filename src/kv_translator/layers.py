@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
-from kv_translator.config import LLMAttentionConfig
+from kv_translator.config import LLAMAttentionConfig
 from kv_translator.rope import RoPEHandler
 
 
 class KVLayerTranslator(nn.Module):
-    def __init__(self, src_cfg: LLMAttentionConfig, tg_cfg: LLMAttentionConfig):
+    def __init__(self, src_cfg: LLAMAttentionConfig, tg_cfg: LLAMAttentionConfig):
         super().__init__()
         self.src_cfg = src_cfg
         self.tg_cfg = tg_cfg
