@@ -1,0 +1,25 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published] # Triggers only when you create an official release tag on GitHub
+
+jobs:
+  pypi-publish:
+    name: Build and publish to PyPI
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "latest"
+        python-version: "3.12"
+
+    - name: Build distribution artifacts
+      run: uv build
+
+    - name: Publish to PyPI
+      run: uv publish --token ${{ secrets.PYPI_API_TOKEN }}
