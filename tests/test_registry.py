@@ -10,8 +10,10 @@ def test_registry_huggingface_adapter_bridge():
 
     # Replicate standard nested Hugging Face cache structure: [24 Layers][Key/Value Tuple][B, H, T, D]
     mock_hf_past_key_values = tuple(
-        (torch.randn(1, LLAMA_3_2_3B.num_kv_heads, 32, LLAMA_3_2_3B.head_dim),
-         torch.randn(1, LLAMA_3_2_3B.num_kv_heads, 32, LLAMA_3_2_3B.head_dim))
+        (
+            torch.randn(1, LLAMA_3_2_3B.num_kv_heads, 32, LLAMA_3_2_3B.head_dim),
+            torch.randn(1, LLAMA_3_2_3B.num_kv_heads, 32, LLAMA_3_2_3B.head_dim),
+        )
         for _ in range(LLAMA_3_2_3B.num_layers)
     )
 
@@ -26,5 +28,15 @@ def test_registry_huggingface_adapter_bridge():
     # Verify target layers match exactly 80 blocks formatted for Llama-3-70B
     assert len(output_cache) == LLAMA_3_70B.num_layers
     # Check that individual layers match Hugging Face layout orientations: [B, H_tg, T, D]
-    assert output_cache[0][0].shape == (1, LLAMA_3_70B.num_kv_heads, 32, LLAMA_3_70B.head_dim)
-    assert output_cache[0][1].shape == (1, LLAMA_3_70B.num_kv_heads, 32, LLAMA_3_70B.head_dim)
+    assert output_cache[0][0].shape == (
+        1,
+        LLAMA_3_70B.num_kv_heads,
+        32,
+        LLAMA_3_70B.head_dim,
+    )
+    assert output_cache[0][1].shape == (
+        1,
+        LLAMA_3_70B.num_kv_heads,
+        32,
+        LLAMA_3_70B.head_dim,
+    )
