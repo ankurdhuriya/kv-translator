@@ -8,7 +8,10 @@ from kv_translator.data_pipeline import KVDatasetGenerator
 def test_dataset_generator_mock_extraction(mock_model_cls, mock_tokenizer_cls):
     # Setup mock behaviors
     mock_tokenizer = MagicMock()
-    mock_tokenizer.return_value = {"input_ids": torch.tensor([[1, 2, 3]])}
+    mock_tokenizer_output = MagicMock()
+    mock_tokenizer_output.input_ids = torch.tensor([[1, 2, 3]])
+    mock_tokenizer_output.to.return_value = mock_tokenizer_output
+    mock_tokenizer.return_value = mock_tokenizer_output
     mock_tokenizer_cls.from_pretrained.return_value = mock_tokenizer
 
     mock_src_model = MagicMock()
